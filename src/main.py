@@ -44,6 +44,7 @@ def main(page: ft.Page):
             sales_p = select_pago_sales.value
             marca = select_marca.value
             proceso = select_proceso.value
+            fecha = input_fecha.value
 
             if proceso == 'Activación':
                 print('Bloque activación')
@@ -51,17 +52,21 @@ def main(page: ft.Page):
                 print("Reporte Marca: ", len(df1))
                 print("Reporte General: ", len(df2))
 
+                resumen_text.value = (
+                    f"\n##############################################################\n\n"
+                )
+
                 duplicados, csv_sin_duplicados = comisiones_act.limpiar_duplicados(df1, df2)     
 
                 if duplicados.empty:
                     resumen_text.value = "No hay duplicados\n"
-                    xlsx, precios_iguales = comisiones_act.procesar_comisiones(df1, sales_p, comision)
+                    xlsx, precios_iguales = comisiones_act.procesar_comisiones(df1, sales_p, comision, fecha)
                 else:
                     df1 = csv_sin_duplicados
                     resumen_text.value = "Si hay duplicados y fueron limpiados\n"
-                    xlsx, precios_iguales = comisiones_act.procesar_comisiones(df1, sales_p, comision)
+                    xlsx, precios_iguales = comisiones_act.procesar_comisiones(df1, sales_p, comision, fecha)
 
-                comisiones_act.estilos_excel(xlsx, marca, precios_iguales)
+                comisiones_act.estilos_excel(xlsx, marca, precios_iguales, fecha)
 
                 resumen_text.value += (
                     #f"📑 Archivo 1: {df1}\n"
@@ -81,7 +86,7 @@ def main(page: ft.Page):
                 print("cantidad antes de eliminar lineas con 1 en reporte marca:", len(df1))
 
                 resumen_text.value += (
-                    f"\n"
+                    f"\n##############################################################\n\n"
                     f"✔️ cantidad antes de eliminar lineas con 1 en reporte marca: {len(df1)}\n"
                 )
 
@@ -94,8 +99,8 @@ def main(page: ft.Page):
                 print(f"Total en CSV {marca} después de eliminar los que empiezan con 1: {len(df1)}")
 
                 csv, diferencias = comisiones_rec.limpiar_archivo(df1, df2)
-                xlsx, precios_iguales = comisiones_rec.procesar_comisiones(csv, sales_p, comision)
-                comisiones_rec.estilos_excel(xlsx, marca, precios_iguales)
+                xlsx, precios_iguales = comisiones_rec.procesar_comisiones(csv, sales_p, comision, fecha)
+                comisiones_rec.estilos_excel(xlsx, marca, precios_iguales, fecha)
 
                 resumen_text.value += (
                     #f"📑 Archivo 1: {df1}\n"
@@ -112,7 +117,7 @@ def main(page: ft.Page):
                 )
 
             else:
-                resumen_text.value += f"❌ Selecciona un proceso"
+                resumen_text.value += f"❌ Selecciona un proceso\n"
 
         except Exception as ex:
                 resumen_text.value += f"❌ Error al procesar los archivos: {ex}\n"
@@ -157,6 +162,11 @@ def main(page: ft.Page):
         options=[ft.dropdown.Option("20%"), ft.dropdown.Option("15%")]
     )
 
+    input_fecha = ft.TextField(
+        label="Formato de fecha",
+        width=250,
+    )
+
     # Pickers para archivos CSV
     file_picker_1 = ft.FilePicker(on_result=on_file_picker_1_result)
     file_picker_2 = ft.FilePicker(on_result=on_file_picker_2_result)
@@ -187,6 +197,7 @@ def main(page: ft.Page):
             select_pago_sales,
             select_proceso,
             input_comision,
+            input_fecha,
             boton_procesar,
             loader,
         ],

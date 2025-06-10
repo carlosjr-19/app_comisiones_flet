@@ -57,7 +57,7 @@ def limpiar_archivo(csv, csv2):
 
     return csv, diferencias
 
-def procesar_comisiones(df, comision_sales, comision):
+def procesar_comisiones(df, comision_sales, comision, fecha):
 
     # Ordenar por fecha ascendente antes de agregar la fila TOTAL
     df = df.sort_values(by='date', ascending=True)
@@ -120,7 +120,7 @@ def procesar_comisiones(df, comision_sales, comision):
     # Crear columna de comisión total (ya con los valores redondeados)
     df['comisión_total'] = (df['comisión'] - df['transacción 4.14%'] - df['tasa fija 3.65']).round(2)
 
-    df['mes'] = 'abr-25'
+    df['mes'] = fecha
     df['porcentaje'] = comision
 
     if comision_sales == "NO":
@@ -135,6 +135,14 @@ def procesar_comisiones(df, comision_sales, comision):
         #condicion cuando no se pagan comisiones por sales
         condicion = df['channel'] == 'Sales'
         df.loc[condicion, 'porcentaje'] = ""
+
+        #condicion cuando no se pagan comisiones por sales bono $ es 0
+        condicion = df['channel'] == 'Sales'
+        df.loc[condicion, 'bono $'] = 0.0
+
+        #condicion cuando no se pagan comisiones por sales bonificación fija $ es 0
+        condicion = df['channel'] == 'Sales'
+        df.loc[condicion, 'bonificación fija $'] = 0.0
 
     cols_a_limpiar = ['bono $', 'bonificación fija $']
 
@@ -197,7 +205,7 @@ def procesar_comisiones(df, comision_sales, comision):
         return df[['mvno_name','msisdn','channel','profile_sim','store_name','user_staff_name','transaction_id','date','mes','mvno_package_name', 'reference_price','mvno_package_price', 'porcentaje', 'bono $', 'bonificación fija $', 'comisión', 'transacción 4.14%', 'tasa fija 3.65', 'comisión_total']], precios_iguales
 
 
-def estilos_excel(df, marca, precios_iguales):
+def estilos_excel(df, marca, precios_iguales, fecha):
     # Crear workbook y hoja
     wb = Workbook()
     ws = wb.active
@@ -207,18 +215,6 @@ def estilos_excel(df, marca, precios_iguales):
     logo = Img('src/assets/images/logo.png')
     logo.anchor = 'A1'  # Esquina superior derecha
     ws.add_image(logo)
-
-    # Buscar Logo de la marca
-    # Diccionario dinámico de logos
-    logo_paths = {m: f'src/assets/images/logos/{m}.png' for m in MVNOS}
-    # Buscar logo de la marca
-    logo_path = logo_paths.get(marca, 'src/assets/images/logo.png')
-    print(logo_path)
-
-    logo_marca = Img(logo_path)
-    logo_marca.anchor = 'N1'
-    ws.add_image(logo_marca)
-
 
     # Encabezado "ACTIVACIONES" centrado
     ws.merge_cells('B5:L5')
@@ -407,6 +403,6 @@ def estilos_excel(df, marca, precios_iguales):
     ws.merge_cells('M5:R5')
 
     # Guardar Excel
-    wb.save(f"Comisiones_rec_{marca}.xlsx")
+    wb.save(f"Comisiones_rec_{marca}_{fecha}.xlsx")
 
 

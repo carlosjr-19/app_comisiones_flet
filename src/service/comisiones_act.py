@@ -23,7 +23,7 @@ def limpiar_duplicados(csv, csv2):
 
     return duplicados, csv_sin_duplicados
 
-def procesar_comisiones(df, comision_sales, comision):
+def procesar_comisiones(df, comision_sales, comision, fecha):
     # Limpiar las columnas de precios: quitar $ y ,
     cols_a_limpiar = ['mvno_package_price', 'reference_price']
 
@@ -100,22 +100,29 @@ def procesar_comisiones(df, comision_sales, comision):
     # Crear columna de comisión total (ya con los valores redondeados)
     df['comisión_total'] = (df['comisión'] - df['transacción 4.14%'] - df['tasa fija 3.65']).round(2)
 
-    df['mes'] = 'abr-25'
+    df['mes'] = fecha
     df['porcentaje'] = comision
 
     if comision_sales == "NO":
-        #condicion cuando no se pagan comisiones por sales
+        #condicion cuando no se pagan comisiones por sales comision total es 0
         condicion = df['channel'] == 'Sales'
         df.loc[condicion, 'comisión_total'] = 0.0
 
-        #condicion cuando no se pagan comisiones por sales
+        #condicion cuando no se pagan comisiones por sales comision es 0
         condicion = df['channel'] == 'Sales'
         df.loc[condicion, 'comisión'] = 0.0
 
-        #condicion cuando no se pagan comisiones por sales
+        #condicion cuando no se pagan comisiones por sales porcentaje es 0
         condicion = df['channel'] == 'Sales'
         df.loc[condicion, 'porcentaje'] = ""
 
+        #condicion cuando no se pagan comisiones por sales bono $ es 0
+        condicion = df['channel'] == 'Sales'
+        df.loc[condicion, 'bono $'] = 0.0
+
+        #condicion cuando no se pagan comisiones por sales bonificación fija $ es 0
+        condicion = df['channel'] == 'Sales'
+        df.loc[condicion, 'bonificación fija $'] = 0.0
 
     cols_a_limpiar = ['bono $', 'bonificación fija $']
 
@@ -130,8 +137,6 @@ def procesar_comisiones(df, comision_sales, comision):
     total_desc_fijo = df['tasa fija 3.65'].sum()
     total_bono20 = df['bono $'].sum()
     total_bono_fijo = df['bonificación fija $'].sum()
-
-    
 
 
     #df['msisdn'] = df['msisdn'].astype(str)
@@ -179,7 +184,7 @@ def procesar_comisiones(df, comision_sales, comision):
         return df[['mvno_name','msisdn','channel','profile_sim','store_name','user_staff_name','transaction_id','date','mes','mvno_package_name', 'reference_price','mvno_package_price', 'porcentaje', 'bono $', 'bonificación fija $', 'comisión', 'transacción 4.14%', 'tasa fija 3.65', 'comisión_total']], precios_iguales
 
 
-def estilos_excel(df, marca, precios_iguales):
+def estilos_excel(df, marca, precios_iguales, fecha):
     # Crear workbook y hoja
     wb = Workbook()
     ws = wb.active
@@ -189,17 +194,6 @@ def estilos_excel(df, marca, precios_iguales):
     logo = Img('src/assets/images/logo.png')
     logo.anchor = 'A1'  # Esquina superior derecha
     ws.add_image(logo)
-
-    # Buscar Logo de la marca
-    # Diccionario dinámico de logos
-    logo_paths = {m: f'src/assets/images/logos/{m}.png' for m in MVNOS}
-    # Buscar logo de la marca
-    logo_path = logo_paths.get(marca, 'src/assets/images/logo.png')
-    print(logo_path)
-
-    logo_marca = Img(logo_path)
-    logo_marca.anchor = 'N1'
-    ws.add_image(logo_marca)
 
     # Encabezado "ACTIVACIONES" centrado
     ws.merge_cells('B5:L5')
@@ -386,5 +380,5 @@ def estilos_excel(df, marca, precios_iguales):
     ws.merge_cells('M5:R5')
 
     # Guardar Excel
-    wb.save(f"Comisiones_act_{marca}.xlsx")
+    wb.save(f"Comisiones_act_{marca}_{fecha}.xlsx")
 

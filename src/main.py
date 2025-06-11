@@ -143,7 +143,7 @@ def main(page: ft.Page):
 
     # Select sales
     select_pago_sales = ft.Dropdown(
-        label = "Se paga por sales",
+        label = "Recibe comisión adelantada por sales",
         width=250,
         options=[ft.dropdown.Option("SI"), ft.dropdown.Option("NO")]
     )
@@ -163,7 +163,8 @@ def main(page: ft.Page):
     )
 
     input_fecha = ft.TextField(
-        label="Formato de fecha",
+        label="Introduce fecha dd-mm-aaaa",
+        value="31-12-2025",
         width=250,
     )
 

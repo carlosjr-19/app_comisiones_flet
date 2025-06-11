@@ -182,7 +182,7 @@ def procesar_comisiones(df, comision_sales, comision, fecha):
         # Concatenar al DataFrame original
         df = pd.concat([df, fila_total], ignore_index=True)
 
-        return df[['mvno_name','msisdn','channel','profile_sim','store_name','user_staff_name','transaction_id','date','mes','mvno_package_name','reference_price' 'mvno_package_price', 'porcentaje', 'comisión', 'transacción 4.14%', 'tasa fija 3.65', 'comisión_total']], precios_iguales
+        return df[['mvno_name','msisdn','channel','profile_sim','store_name','user_staff_name','transaction_id','date','mes','mvno_package_name','reference_price', 'mvno_package_price', 'porcentaje', 'comisión', 'transacción 4.14%', 'tasa fija 3.65', 'comisión_total']], precios_iguales
     
     else:
         # Crear un DataFrame con la fila del total

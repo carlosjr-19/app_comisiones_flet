@@ -244,7 +244,7 @@ def estilos_excel(df, marca, precios_iguales, fecha):
             if precios_iguales == True:
                 # Convertir a negativo si es una de las columnas que deben ser negativas
                 # Las columnas P y Q son las 16 y 17 en Excel (ya que empiezas en columna 2)
-                if c_idx in [16, 17] and r_idx > 7:  # r_idx > 7 para no afectar los encabezados
+                if c_idx in [17, 18] and r_idx > 7:  # r_idx > 7 para no afectar los encabezados
                     try:
                         if value is not None and str(value).strip() != '':  # Solo si hay un valor
                             value = -abs(float(value))
@@ -306,35 +306,35 @@ def estilos_excel(df, marca, precios_iguales, fecha):
 
         if precios_iguales == True:
             # leyenda "DESCUENTO" centrado en las celdas
-            ws.merge_cells('P6:Q6')
-            ws['P6'] = "DESCUENTO"
-            ws['P6'].font = Font(size=12, bold=False)
-            ws['P6'].alignment = Alignment(horizontal='center')
-            ws['P6'].fill = PatternFill(start_color="D9D9D9", end_color="D9D9D9", fill_type="solid")
-            thin_border = Border(left=Side(style='thin'), 
-                            right=Side(style='thin'), 
-                            top=Side(style='thin'), 
-                            bottom=Side(style='thin'))
-            ws['P6'].border = thin_border
+            ws.merge_cells('Q6:R6')
+            ws['Q6'] = "DESCUENTO"
+            ws['Q6'].font = Font(size=12, bold=False)
+            ws['Q6'].alignment = Alignment(horizontal='center')
+            ws['Q6'].fill = PatternFill(start_color="D9D9D9", end_color="D9D9D9", fill_type="solid")
             thin_border = Border(left=Side(style='thin'), 
                             right=Side(style='thin'), 
                             top=Side(style='thin'), 
                             bottom=Side(style='thin'))
             ws['Q6'].border = thin_border
+            thin_border = Border(left=Side(style='thin'), 
+                            right=Side(style='thin'), 
+                            top=Side(style='thin'), 
+                            bottom=Side(style='thin'))
+            ws['R6'].border = thin_border
 
 
             #FORMATEAR COMO MONEDA después de haber insertado todo
-            for col_letter in ['M', 'O', 'P', 'Q', 'R']:  # Ajusta letras según tus columnas reales
+            for col_letter in ['M', 'N', 'P', 'Q', 'R', 'S']:  # Ajusta letras según tus columnas reales
                 for cell in ws[col_letter][7:]:  # desde fila 8 en adelante
                     cell.number_format = numbers.FORMAT_CURRENCY_USD_SIMPLE
 
             #FORMATEAR CELDAS DE COLORES 
-            for col_letter in ['P', 'Q']:  # Ajusta letras según tus columnas reales
+            for col_letter in ['Q', 'R']:  # Ajusta letras según tus columnas reales
                 for cell in ws[col_letter][6:]:  # desde fila 7 en adelante
                     cell.fill = PatternFill(start_color="f9e79f", end_color="f9e79f", fill_type="solid")
 
             #FORMATEAR CELDAS DE COLORES 
-            for col_letter in ['O', 'R']:  # Ajusta letras según tus columnas reales
+            for col_letter in ['P', 'S']:  # Ajusta letras según tus columnas reales
                 for cell in ws[col_letter][6:]:  # desde fila 7 en adelante
                     cell.fill = PatternFill(start_color="aed6f1", end_color="aed6f1", fill_type="solid")
         elif precios_iguales == False:
